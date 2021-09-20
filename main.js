@@ -26,8 +26,8 @@ if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
 }
 
 function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
-    readTitle: "Judul Button Belum Di Set",
-    moveTo: "readComplete",
+    readTitle: "",
+    moveTo: "",
 }) {
     if (bookListData != null && bookListData != 0) {
         bookListData.forEach(book => {
@@ -47,7 +47,7 @@ function showBookList(bookListData = null, bookListViewElement = null, buttonAct
     } else {
         bookListViewElement.innerHTML = `
         <article class="book_item">
-            <p style="color:red">Tidak ada buku!</p>
+            <p style="color:red">Tidak ada data buku!</p>
         </article>
         `;
     }
