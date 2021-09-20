@@ -18,10 +18,6 @@ if (typeof (Storage) === "undefined") {
     console.error("Your browser is not supported localStorage");
 } else {
 
-    let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
-    let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
-
-
     if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
         localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
     }
@@ -29,6 +25,9 @@ if (typeof (Storage) === "undefined") {
     if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
         localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
     }
+
+    let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
+    let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
     function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
         readTitle: "",
