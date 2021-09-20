@@ -174,6 +174,7 @@ actionsButtons.forEach((actionButton) => {
         } else if (dataRole == 'delete') {
             // # Kriteria 4: Dapat Menghapus Data Buku
             // Hapus Datanya
+            alert('Buku Berhasil Dihapus!');
             deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
             deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
         }
