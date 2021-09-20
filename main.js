@@ -14,24 +14,29 @@ let completeBookshelfList = document.getElementById('completeBookshelfList');
 const BOOK_IS_COMPLETE_KEY = 'bookIsComplete';
 const BOOK_IS_INCOMPLETE_KEY = 'bookIsIncomplete';
 
-let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
-let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
+if (typeof (Storage) === "undefined") {
+    console.error("Your browser is not supported localStorage");
+} else {
 
-if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
-    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
-}
+    let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
+    let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
-if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
-    localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
-}
 
-function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
-    readTitle: "",
-    moveTo: "",
-}) {
-    if (bookListData != null && bookListData != 0) {
-        bookListData.forEach(book => {
-            bookListViewElement.innerHTML += `
+    if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
+        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
+    }
+
+    if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
+        localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
+    }
+
+    function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
+        readTitle: "",
+        moveTo: "",
+    }) {
+        if (bookListData != null && bookListData != 0) {
+            bookListData.forEach(book => {
+                bookListViewElement.innerHTML += `
             <article class="book_item">
                 <h3>${book.title}</h3>
                 <p>Penulis: ${book.author}</p>
@@ -43,140 +48,141 @@ function showBookList(bookListData = null, bookListViewElement = null, buttonAct
                 </div>
             </article>
             `;
-        });
-    } else {
-        bookListViewElement.innerHTML = `
+            });
+        } else {
+            bookListViewElement.innerHTML = `
         <article class="book_item">
             <p style="color:red">Tidak ada data buku!</p>
         </article>
         `;
+        }
     }
-}
 
-inputBookIsComplete.addEventListener('click', () => {
-    if (document.querySelector('#inputBookIsComplete:checked') !== null) {
-        document.querySelector('#bookSubmit > span').innerText = 'Sudah selesai dibaca';
-    } else {
-        document.querySelector('#bookSubmit > span').innerText = 'Belum selesai dibaca';
-    }
-});
+    inputBookIsComplete.addEventListener('click', () => {
+        if (document.querySelector('#inputBookIsComplete:checked') !== null) {
+            document.querySelector('#bookSubmit > span').innerText = 'Sudah selesai dibaca';
+        } else {
+            document.querySelector('#bookSubmit > span').innerText = 'Belum selesai dibaca';
+        }
+    });
 
-showBookList(booksComplete, completeBookshelfList, {
-    readTitle: "Tandai Belum dibaca",
-    moveTo: "readIncomplete",
-});
-
-showBookList(booksIncomplete, incompleteBookshelfList, {
-    readTitle: "Tandai Sudah dibaca",
-    moveTo: "readComplete",
-});
-
-searchBook.addEventListener('submit', (e) => e.preventDefault());
-
-searchBookTitle.addEventListener('input', () => {
-    let searchValue = searchBookTitle.value.toLowerCase();
-
-    let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
-    let tempIncomplete = booksIncomplete.filter((book) => book.title.toLowerCase().includes(searchValue));
-
-    completeBookshelfList.innerHTML = '';
-    showBookList(tempComplete, completeBookshelfList, {
+    showBookList(booksComplete, completeBookshelfList, {
         readTitle: "Tandai Belum dibaca",
         moveTo: "readIncomplete",
     });
 
-    incompleteBookshelfList.innerHTML = '';
-    showBookList(tempIncomplete, incompleteBookshelfList, {
-        readTitle: "Tandai Belum dibaca",
-        moveTo: "readIncomplete",
+    showBookList(booksIncomplete, incompleteBookshelfList, {
+        readTitle: "Tandai Sudah dibaca",
+        moveTo: "readComplete",
     });
-});
 
-inputBook.addEventListener('submit', () => {
-    let newBook = {
-        id: new Date().getTime(),
-        title: inputBookTitle.value,
-        author: inputBookAuthor.value,
-        year: inputBookYear.value,
-        isComplete: (document.querySelector('#inputBookIsComplete:checked') !== null) ? true : false,
-    }
+    searchBook.addEventListener('submit', (event) => event.preventDefault());
 
-    if (newBook.isComplete == true) {
-        booksComplete.push(newBook);
-        localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
+    searchBookTitle.addEventListener('input', () => {
+        let searchValue = searchBookTitle.value.toLowerCase();
 
-    } else if (newBook.isComplete == false) {
-        booksIncomplete.push(newBook);
-        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
-    }
-});
+        let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+        let tempIncomplete = booksIncomplete.filter((book) => book.title.toLowerCase().includes(searchValue));
 
-let actionsButtons = document.querySelectorAll('.action_button');
+        completeBookshelfList.innerHTML = '';
+        showBookList(tempComplete, completeBookshelfList, {
+            readTitle: "Tandai Belum dibaca",
+            moveTo: "readIncomplete",
+        });
 
-actionsButtons.forEach((actionButton) => {
-    actionButton.addEventListener('click', () => {
-        let dataBookID = actionButton.getAttribute('data-id');
-        let dataRole = actionButton.getAttribute('data-role');
+        incompleteBookshelfList.innerHTML = '';
+        showBookList(tempIncomplete, incompleteBookshelfList, {
+            readTitle: "Tandai Belum dibaca",
+            moveTo: "readIncomplete",
+        });
+    });
 
-        const deleteBookData = (books, BOOKS_STORAGE_KEY) => {
-            let temp = [];
-            books.forEach(book => {
-                if (book.id != dataBookID) {
-                    temp.push(book);
-                }
-            });
-            localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(temp));
+    inputBook.addEventListener('submit', () => {
+        let newBook = {
+            id: new Date().getTime(),
+            title: inputBookTitle.value,
+            author: inputBookAuthor.value,
+            year: inputBookYear.value,
+            isComplete: (document.querySelector('#inputBookIsComplete:checked') !== null) ? true : false,
         }
 
-        if (dataRole == 'markAs') {
-            let moveTo = actionButton.getAttribute('data-moveTo');
-            if (moveTo == 'readComplete') {
-                let temp = [];
+        if (newBook.isComplete == true) {
+            booksComplete.push(newBook);
+            localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
 
-                booksIncomplete.forEach(book => {
-                    if (book.id == dataBookID) {
-                        return temp = {
-                            id: book.id,
-                            title: book.title,
-                            author: book.author,
-                            year: book.year,
-                            isComplete: book.isComplete,
-                        };
+        } else if (newBook.isComplete == false) {
+            booksIncomplete.push(newBook);
+            localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
+        }
+    });
+
+    let actionsButtons = document.querySelectorAll('.action_button');
+
+    actionsButtons.forEach((actionButton) => {
+        actionButton.addEventListener('click', () => {
+            let dataBookID = actionButton.getAttribute('data-id');
+            let dataRole = actionButton.getAttribute('data-role');
+
+            const deleteBookData = (books, BOOKS_STORAGE_KEY) => {
+                let temp = [];
+                books.forEach(book => {
+                    if (book.id != dataBookID) {
+                        temp.push(book);
                     }
                 });
-
-                temp.isComplete = true;
-                booksComplete.push(temp);
-                deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY);
-                localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
-
-            } else {
-                let temp = [];
-
-                booksComplete.forEach(book => {
-                    if (book.id == dataBookID) {
-                        return temp = {
-                            id: book.id,
-                            title: book.title,
-                            author: book.author,
-                            year: book.year,
-                            isComplete: book.isComplete,
-                        };
-                    }
-                });
-
-                temp.isComplete = false;
-                booksIncomplete.push(temp);
-                deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-                localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
+                localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(temp));
             }
 
-        } else if (dataRole == 'delete') {
-            alert('Buku Berhasil Dihapus!');
-            deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-            deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY)
-        }
+            if (dataRole == 'markAs') {
+                let moveTo = actionButton.getAttribute('data-moveTo');
+                if (moveTo == 'readComplete') {
+                    let temp = [];
 
-        location.reload();
+                    booksIncomplete.forEach(book => {
+                        if (book.id == dataBookID) {
+                            return temp = {
+                                id: book.id,
+                                title: book.title,
+                                author: book.author,
+                                year: book.year,
+                                isComplete: book.isComplete,
+                            };
+                        }
+                    });
+
+                    temp.isComplete = true;
+                    booksComplete.push(temp);
+                    deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY);
+                    localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
+
+                } else {
+                    let temp = [];
+
+                    booksComplete.forEach(book => {
+                        if (book.id == dataBookID) {
+                            return temp = {
+                                id: book.id,
+                                title: book.title,
+                                author: book.author,
+                                year: book.year,
+                                isComplete: book.isComplete,
+                            };
+                        }
+                    });
+
+                    temp.isComplete = false;
+                    booksIncomplete.push(temp);
+                    deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
+                    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
+                }
+
+            } else if (dataRole == 'delete') {
+                alert('Buku Berhasil Dihapus!');
+                deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
+                deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY)
+            }
+
+            location.reload();
+        });
     });
-});
+}
