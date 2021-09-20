@@ -25,6 +25,7 @@ let booksInComplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
 // # Kriteria 2: Memiliki Dua Rak Buku
 // Cek apakah localstorage sudah di set '[]'
+
 if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
     localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
 }
@@ -61,7 +62,7 @@ function showBookList(bookListData = null, bookListViewElement = null, buttonAct
     } else {
         bookListViewElement.innerHTML = `
         <article class="book_item">
-            <p>Tidak ada buku!</p>
+            <p style="color:red">Tidak ada buku!</p>
         </article>
         `;
     }
@@ -170,14 +171,12 @@ actionsButtons.forEach((actionButton) => {
                 localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
 
             }
-            location.reload();
-
         } else if (dataRole == 'delete') {
             // # Kriteria 4: Dapat Menghapus Data Buku
             // Hapus Datanya
             deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
             deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
-            location.reload();
         }
+        location.reload();
     });
 });
