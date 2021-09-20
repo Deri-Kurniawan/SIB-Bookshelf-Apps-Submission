@@ -23,6 +23,7 @@ const BOOK_IS_INCOMPLETE_KEY = 'bookIsInComplete';
 let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
 let booksInComplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
+// Cek apakah localstorage sudah di set '[]'
 if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
     localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
 }
@@ -31,21 +32,26 @@ if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
     localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
 }
 
+/**
+ * Menampilkan data object ke dalam document element
+ * @param {Object} bookListData data buku
+ * @param {Document} bookListViewElement element html
+ */
 function showBookList(bookListData = null, bookListViewElement = null) {
     if (bookListData != null && bookListData != 0) {
         bookListData.forEach(book => {
             bookListViewElement.innerHTML += `
-        <article class="book_item">
-            <h3>${book.title}</h3>
-            <p>Penulis: ${book.author}</p>
-            <p>Tahun: ${book.year}</p>
+            <article class="book_item">
+                <h3>${book.title}</h3>
+                <p>Penulis: ${book.author}</p>
+                <p>Tahun: ${book.year}</p>
 
-            <div class="action">
-                <button class="green">Selesai dibaca</button>
-                <button class="red">Hapus buku</button>
-            </div>
-        </article>
-    `;
+                <div class="action">
+                    <button class="green">Selesai dibaca</button>
+                    <button class="red">Hapus buku</button>
+                </div>
+            </article>
+            `;
         });
     } else {
         bookListViewElement.innerHTML = `
@@ -54,10 +60,8 @@ function showBookList(bookListData = null, bookListViewElement = null) {
         </article>
         `;
     }
-
-    console.log(bookListData);
 }
-
+// Ketika checkbox sudah/belum dibaca di click
 inputBookIsComplete.addEventListener('click', () => {
     if (document.querySelector('#inputBookIsComplete:checked') !== null) {
         document.querySelector('#bookSubmit > span').innerText = 'Sudah selesai dibaca';
@@ -66,6 +70,7 @@ inputBookIsComplete.addEventListener('click', () => {
     }
 });
 
+// Tampilkan data ke view
 showBookList(JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY)), completeBookshelfList);
 showBookList(JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY)), incompleteBookshelfList);
 
@@ -86,7 +91,4 @@ inputBook.addEventListener('submit', (e) => {
         booksInComplete.push(newBook);
         localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
     }
-
-    console.log(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
-    console.log(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 });
