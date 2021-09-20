@@ -24,13 +24,14 @@ let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
 let booksInComplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
 // Cek apakah localstorage sudah di set '[]'
+if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
+    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
+}
+
 if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
     localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
 }
 
-if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
-    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
-}
 
 /**
  * Menampilkan data object ke dalam document element
@@ -47,8 +48,8 @@ function showBookList(bookListData = null, bookListViewElement = null) {
                 <p>Tahun: ${book.year}</p>
 
                 <div class="action">
-                    <button class="green">Selesai dibaca</button>
-                    <button class="red">Hapus buku</button>
+                    <button class="action_button green" data-id="${book.id}" data-role="readComplete">Selesai dibaca</button>
+                    <button class="action_button red" data-id="${book.id}" data-role="delete">Hapus buku</button>
                 </div>
             </article>
             `;
@@ -95,4 +96,39 @@ inputBook.addEventListener('submit', (e) => {
         booksInComplete.push(newBook);
         localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
     }
+});
+
+let actionsButtons = document.querySelectorAll('.action_button');
+
+// Keluarkan semua actions butons dan buat event pada setiap element action button
+actionsButtons.forEach((actionButton) => {
+    actionButton.addEventListener('click', () => {
+
+        // ambil data ID dan Role nya
+        let dataBookID = actionButton.getAttribute('data-id');
+        let dataRole = actionButton.getAttribute('data-role');
+
+        const deleteBookData = (books, BOOKS_STORAGE_KEY) => {
+            let temp = [];
+            books.forEach(book => {
+                if (book.id != dataBookID) {
+                    temp.push(book);
+                }
+            });
+            localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(temp));
+        }
+
+        // cek apakah itu tandai sbg di baca atau hapus
+        if (dataRole == 'readComplete') {
+
+        } else if (dataRole == 'delete') {
+
+            // Hapus Datanya
+            deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
+            deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
+            location.reload();
+
+
+        }
+    });
 });
