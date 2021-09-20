@@ -53,7 +53,7 @@ function showBookList(bookListData = null, bookListViewElement = null, buttonAct
                 <p>Tahun: ${book.year}</p>
 
                 <div class="action">
-                    <button class="action_button green" data-id="${book.id}" data-role="readComplete" data-moveTo="${buttonActionObjectData.moveTo}">${buttonActionObjectData.readTitle}</button>
+                    <button class="action_button green" data-id="${book.id}" data-role="markAs" data-moveTo="${buttonActionObjectData.moveTo}">${buttonActionObjectData.readTitle}</button>
                     <button class="action_button red" data-id="${book.id}" data-role="delete">Hapus buku</button>
                 </div>
             </article>
@@ -132,7 +132,7 @@ actionsButtons.forEach((actionButton) => {
 
         // # Kriteria 3: Dapat Memindahkan Buku antar Rak
         // cek apakah itu tandai sbg di baca atau hapus
-        if (dataRole == 'readComplete') {
+        if (dataRole == 'markAs') {
             let moveTo = actionButton.getAttribute('data-moveTo');
             if (moveTo == 'readComplete') {
                 let temp = [];
@@ -147,7 +147,7 @@ actionsButtons.forEach((actionButton) => {
                         };
                     }
                 });
-
+                temp.isComplete = true;
                 booksComplete.push(temp);
                 deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
@@ -165,7 +165,7 @@ actionsButtons.forEach((actionButton) => {
                         };
                     }
                 });
-
+                temp.isComplete = false;
                 booksInComplete.push(temp);
                 deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
