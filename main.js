@@ -12,10 +12,10 @@ let incompleteBookshelfList = document.getElementById('incompleteBookshelfList')
 let completeBookshelfList = document.getElementById('completeBookshelfList');
 
 const BOOK_IS_COMPLETE_KEY = 'bookIsComplete';
-const BOOK_IS_INCOMPLETE_KEY = 'bookIsInComplete';
+const BOOK_IS_INCOMPLETE_KEY = 'bookIsIncomplete';
 
 let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
-let booksInComplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
+let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
 if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
     localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
@@ -63,34 +63,36 @@ inputBookIsComplete.addEventListener('click', () => {
 
 showBookList(booksComplete, completeBookshelfList, {
     readTitle: "Tandai Belum dibaca",
-    moveTo: "readInComplete",
+    moveTo: "readIncomplete",
 });
-showBookList(booksInComplete, incompleteBookshelfList, {
+
+showBookList(booksIncomplete, incompleteBookshelfList, {
     readTitle: "Tandai Sudah dibaca",
     moveTo: "readComplete",
 });
 
 searchBook.addEventListener('submit', (e) => e.preventDefault());
+
 searchBookTitle.addEventListener('input', () => {
     let searchValue = searchBookTitle.value.toLowerCase();
 
     let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
-    let tempIncomplete = booksInComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+    let tempIncomplete = booksIncomplete.filter((book) => book.title.toLowerCase().includes(searchValue));
 
     completeBookshelfList.innerHTML = '';
     showBookList(tempComplete, completeBookshelfList, {
         readTitle: "Tandai Belum dibaca",
-        moveTo: "readInComplete",
+        moveTo: "readIncomplete",
     });
 
     incompleteBookshelfList.innerHTML = '';
     showBookList(tempIncomplete, incompleteBookshelfList, {
         readTitle: "Tandai Belum dibaca",
-        moveTo: "readInComplete",
+        moveTo: "readIncomplete",
     });
 });
 
-inputBook.addEventListener('submit', (e) => {
+inputBook.addEventListener('submit', () => {
     let newBook = {
         id: new Date().getTime(),
         title: inputBookTitle.value,
@@ -104,8 +106,8 @@ inputBook.addEventListener('submit', (e) => {
         localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
 
     } else if (newBook.isComplete == false) {
-        booksInComplete.push(newBook);
-        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
+        booksIncomplete.push(newBook);
+        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
     }
 });
 
@@ -113,7 +115,6 @@ let actionsButtons = document.querySelectorAll('.action_button');
 
 actionsButtons.forEach((actionButton) => {
     actionButton.addEventListener('click', () => {
-
         let dataBookID = actionButton.getAttribute('data-id');
         let dataRole = actionButton.getAttribute('data-role');
 
@@ -131,7 +132,8 @@ actionsButtons.forEach((actionButton) => {
             let moveTo = actionButton.getAttribute('data-moveTo');
             if (moveTo == 'readComplete') {
                 let temp = [];
-                booksInComplete.forEach(book => {
+
+                booksIncomplete.forEach(book => {
                     if (book.id == dataBookID) {
                         return temp = {
                             id: book.id,
@@ -142,12 +144,15 @@ actionsButtons.forEach((actionButton) => {
                         };
                     }
                 });
+
                 temp.isComplete = true;
                 booksComplete.push(temp);
-                deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY);
+                deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
+
             } else {
                 let temp = [];
+
                 booksComplete.forEach(book => {
                     if (book.id == dataBookID) {
                         return temp = {
@@ -159,16 +164,19 @@ actionsButtons.forEach((actionButton) => {
                         };
                     }
                 });
+
                 temp.isComplete = false;
-                booksInComplete.push(temp);
+                booksIncomplete.push(temp);
                 deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-                localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
+                localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
             }
+
         } else if (dataRole == 'delete') {
             alert('Buku Berhasil Dihapus!');
             deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-            deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
+            deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY)
         }
+
         location.reload();
     });
 });
