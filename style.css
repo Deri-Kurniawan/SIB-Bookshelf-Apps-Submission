@@ -36,7 +36,7 @@ main {
     display: flex;
     flex-direction: column;
     padding: 16px;
-    border: 1px solid black;
+    box-shadow: 2px 5px 10px rgb(148, 135, 135);
     border-radius: 10px;
 }
 
@@ -71,8 +71,6 @@ main {
     border-radius: 5px;
 }
 
-
-
 .input_section>form>.input>label {
     color: rgb(237, 100, 100);
     font-weight: bold;
@@ -96,7 +94,7 @@ main {
     flex-direction: column;
     align-items: center;
     padding: 16px;
-    border: 1px solid black;
+    box-shadow: 2px 5px 10px rgb(148, 135, 135);
     border-radius: 10px;
 }
 
@@ -132,9 +130,9 @@ main {
 
 .book_shelf {
     margin: 16px 0 0 0;
-    border: 1px solid black;
     padding: 16px;
     border-radius: 10px;
+    box-shadow: 2px 5px 10px rgb(148, 135, 135);
 }
 
 .book_shelf>h2 {
@@ -173,4 +171,9 @@ p {
 .book_shelf>.book_list>.book_item>.action>.red {
     background-color: rgb(237, 100, 100);
     color: white;
+}
+
+#bookSubmit:hover,
+#searchSubmit:hover {
+    background-color: rgba(237, 100, 100, 0.87);
 }
