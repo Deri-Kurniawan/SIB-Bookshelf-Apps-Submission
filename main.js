@@ -37,8 +37,11 @@ if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
  * Menampilkan data object ke dalam document element
  * @param {Object} bookListData data buku
  * @param {Document} bookListViewElement element html
+ * @param {Object} buttonActionObjectData object button attr
  */
-function showBookList(bookListData = null, bookListViewElement = null) {
+function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
+    readTitle: "Judul Button Belum Di Set"
+}) {
     if (bookListData != null && bookListData != 0) {
         bookListData.forEach(book => {
             bookListViewElement.innerHTML += `
@@ -48,7 +51,7 @@ function showBookList(bookListData = null, bookListViewElement = null) {
                 <p>Tahun: ${book.year}</p>
 
                 <div class="action">
-                    <button class="action_button green" data-id="${book.id}" data-role="readComplete">Selesai dibaca</button>
+                    <button class="action_button green" data-id="${book.id}" data-role="readComplete">${buttonActionObjectData.readTitle}</button>
                     <button class="action_button red" data-id="${book.id}" data-role="delete">Hapus buku</button>
                 </div>
             </article>
@@ -72,8 +75,12 @@ inputBookIsComplete.addEventListener('click', () => {
 });
 
 // Tampilkan data ke view
-showBookList(JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY)), completeBookshelfList);
-showBookList(JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY)), incompleteBookshelfList);
+showBookList(booksComplete, completeBookshelfList, {
+    readTitle: "Tandai Belum dibaca"
+});
+showBookList(booksInComplete, incompleteBookshelfList, {
+    readTitle: "Tandai Sudah dibaca"
+});
 
 // # Kriteria 1: Mampu Menambahkan Data Buku
 inputBook.addEventListener('submit', (e) => {
@@ -120,6 +127,7 @@ actionsButtons.forEach((actionButton) => {
 
         // cek apakah itu tandai sbg di baca atau hapus
         if (dataRole == 'readComplete') {
+            // fitur sudah di baca
 
         } else if (dataRole == 'delete') {
 
@@ -127,8 +135,6 @@ actionsButtons.forEach((actionButton) => {
             deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
             deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
             location.reload();
-
-
         }
     });
 });
