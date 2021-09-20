@@ -86,6 +86,27 @@ showBookList(booksInComplete, incompleteBookshelfList, {
     moveTo: "readComplete",
 });
 
+// pencarian
+searchBook.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let searchValue = searchBookTitle.value.toLowerCase();
+
+    let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+    let tempIncomplete = booksInComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+
+    completeBookshelfList.innerHTML = '';
+    showBookList(tempComplete, completeBookshelfList, {
+        readTitle: "Tandai Belum dibaca",
+        moveTo: "readInComplete",
+    });
+
+    incompleteBookshelfList.innerHTML = '';
+    showBookList(tempIncomplete, incompleteBookshelfList, {
+        readTitle: "Tandai Belum dibaca",
+        moveTo: "readInComplete",
+    });
+});
+
 // # Kriteria 1: Mampu Menambahkan Data Buku
 inputBook.addEventListener('submit', (e) => {
     // set buku baru
