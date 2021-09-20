@@ -86,6 +86,27 @@ showBookList(booksInComplete, incompleteBookshelfList, {
     moveTo: "readComplete",
 });
 
+// pencarian
+searchBook.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let searchValue = searchBookTitle.value.toLowerCase();
+
+    let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+    let tempIncomplete = booksInComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+
+    completeBookshelfList.innerHTML = '';
+    showBookList(tempComplete, completeBookshelfList, {
+        readTitle: "Tandai Belum dibaca",
+        moveTo: "readInComplete",
+    });
+
+    incompleteBookshelfList.innerHTML = '';
+    showBookList(tempIncomplete, incompleteBookshelfList, {
+        readTitle: "Tandai Belum dibaca",
+        moveTo: "readInComplete",
+    });
+});
+
 // # Kriteria 1: Mampu Menambahkan Data Buku
 inputBook.addEventListener('submit', (e) => {
     // set buku baru
@@ -151,7 +172,6 @@ actionsButtons.forEach((actionButton) => {
                 booksComplete.push(temp);
                 deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
-
             } else {
                 let temp = [];
                 booksComplete.forEach(book => {
@@ -169,11 +189,11 @@ actionsButtons.forEach((actionButton) => {
                 booksInComplete.push(temp);
                 deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
-
             }
         } else if (dataRole == 'delete') {
             // # Kriteria 4: Dapat Menghapus Data Buku
             // Hapus Datanya
+            alert('Buku Berhasil Dihapus!');
             deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
             deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
         }
