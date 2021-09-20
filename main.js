@@ -151,7 +151,6 @@ actionsButtons.forEach((actionButton) => {
                 booksComplete.push(temp);
                 deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
-
             } else {
                 let temp = [];
                 booksComplete.forEach(book => {
@@ -169,7 +168,6 @@ actionsButtons.forEach((actionButton) => {
                 booksInComplete.push(temp);
                 deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
                 localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
-
             }
         } else if (dataRole == 'delete') {
             // # Kriteria 4: Dapat Menghapus Data Buku
