@@ -5,48 +5,37 @@ let inputBookAuthor = document.getElementById('inputBookAuthor');
 let inputBookYear = document.getElementById('inputBookYear');
 let inputBookIsComplete = document.getElementById('inputBookIsComplete');
 let bookSubmit = document.getElementById('bookSubmit');
-
-// Search Form
 let searchBook = document.getElementById('searchBook');
 let searchBookTitle = document.getElementById('searchBookTitle');
 let searchSubmit = document.getElementById('searchSubmit');
-
-// View Box
 let incompleteBookshelfList = document.getElementById('incompleteBookshelfList');
 let completeBookshelfList = document.getElementById('completeBookshelfList');
 
-// Constant
 const BOOK_IS_COMPLETE_KEY = 'bookIsComplete';
-const BOOK_IS_INCOMPLETE_KEY = 'bookIsInComplete';
+const BOOK_IS_INCOMPLETE_KEY = 'bookIsIncomplete';
 
-// Rak Buku Berbentuk JSON
-let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
-let booksInComplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
+if (typeof (Storage) === "undefined") {
+    console.error("Your browser is not supported localStorage");
+} else {
 
-// # Kriteria 2: Memiliki Dua Rak Buku
-// Cek apakah localstorage sudah di set '[]'
+    if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
+        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
+    }
 
-if (localStorage.getItem(BOOK_IS_INCOMPLETE_KEY) === null) {
-    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify([]));
-}
+    if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
+        localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
+    }
 
-if (localStorage.getItem(BOOK_IS_COMPLETE_KEY) === null) {
-    localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify([]));
-}
+    let booksComplete = JSON.parse(localStorage.getItem(BOOK_IS_COMPLETE_KEY));
+    let booksIncomplete = JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY));
 
-/**
- * Menampilkan data object ke dalam document element
- * @param {Object} bookListData data buku
- * @param {Document} bookListViewElement element html
- * @param {Object} buttonActionObjectData object button attr
- */
-function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
-    readTitle: "Judul Button Belum Di Set",
-    moveTo: "readComplete",
-}) {
-    if (bookListData != null && bookListData != 0) {
-        bookListData.forEach(book => {
-            bookListViewElement.innerHTML += `
+    function showBookList(bookListData = null, bookListViewElement = null, buttonActionObjectData = {
+        readTitle: "",
+        moveTo: "",
+    }) {
+        if (bookListData != null && bookListData != 0) {
+            bookListData.forEach(book => {
+                bookListViewElement.innerHTML += `
             <article class="book_item">
                 <h3>${book.title}</h3>
                 <p>Penulis: ${book.author}</p>
@@ -58,145 +47,141 @@ function showBookList(bookListData = null, bookListViewElement = null, buttonAct
                 </div>
             </article>
             `;
-        });
-    } else {
-        bookListViewElement.innerHTML = `
+            });
+        } else {
+            bookListViewElement.innerHTML = `
         <article class="book_item">
-            <p style="color:red">Tidak ada buku!</p>
+            <p style="color:red">Tidak ada data buku!</p>
         </article>
         `;
+        }
     }
-}
-// Ketika checkbox sudah/belum dibaca di click
-inputBookIsComplete.addEventListener('click', () => {
-    if (document.querySelector('#inputBookIsComplete:checked') !== null) {
-        document.querySelector('#bookSubmit > span').innerText = 'Sudah selesai dibaca';
-    } else {
-        document.querySelector('#bookSubmit > span').innerText = 'Belum selesai dibaca';
-    }
-});
 
-// Tampilkan data ke view
-showBookList(booksComplete, completeBookshelfList, {
-    readTitle: "Tandai Belum dibaca",
-    moveTo: "readInComplete",
-});
-showBookList(booksInComplete, incompleteBookshelfList, {
-    readTitle: "Tandai Sudah dibaca",
-    moveTo: "readComplete",
-});
-
-// pencarian
-searchBook.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let searchValue = searchBookTitle.value.toLowerCase();
-
-    let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
-    let tempIncomplete = booksInComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
-
-    completeBookshelfList.innerHTML = '';
-    showBookList(tempComplete, completeBookshelfList, {
-        readTitle: "Tandai Belum dibaca",
-        moveTo: "readInComplete",
+    inputBookIsComplete.addEventListener('click', () => {
+        if (document.querySelector('#inputBookIsComplete:checked') !== null) {
+            document.querySelector('#bookSubmit > span').innerText = 'Sudah selesai dibaca';
+        } else {
+            document.querySelector('#bookSubmit > span').innerText = 'Belum selesai dibaca';
+        }
     });
 
-    incompleteBookshelfList.innerHTML = '';
-    showBookList(tempIncomplete, incompleteBookshelfList, {
+    showBookList(booksComplete, completeBookshelfList, {
         readTitle: "Tandai Belum dibaca",
-        moveTo: "readInComplete",
+        moveTo: "readIncomplete",
     });
-});
 
-// # Kriteria 1: Mampu Menambahkan Data Buku
-inputBook.addEventListener('submit', (e) => {
-    // set buku baru
-    let newBook = {
-        id: new Date().getTime(),
-        title: inputBookTitle.value,
-        author: inputBookAuthor.value,
-        year: inputBookYear.value,
-        isComplete: (document.querySelector('#inputBookIsComplete:checked') !== null) ? true : false,
-    }
+    showBookList(booksIncomplete, incompleteBookshelfList, {
+        readTitle: "Tandai Sudah dibaca",
+        moveTo: "readComplete",
+    });
 
-    // # Kriteria 5: Manfaatkan localStorage dalam Menyimpan Data Buku
-    // cek apakah sudah dibaca atau belum
-    if (newBook.isComplete == true) {
-        //push kedalam buku baru ke books complete
-        booksComplete.push(newBook);
-        //masukan ke localStorage book is complete
-        localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
-    } else if (newBook.isComplete == false) {
-        booksInComplete.push(newBook);
-        localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
-    }
-});
+    searchBook.addEventListener('submit', (event) => event.preventDefault());
 
-let actionsButtons = document.querySelectorAll('.action_button');
+    searchBookTitle.addEventListener('input', () => {
+        let searchValue = searchBookTitle.value.toLowerCase();
 
-// Keluarkan semua actions butons dan buat event pada setiap element action button
-actionsButtons.forEach((actionButton) => {
-    actionButton.addEventListener('click', () => {
+        let tempComplete = booksComplete.filter((book) => book.title.toLowerCase().includes(searchValue));
+        let tempIncomplete = booksIncomplete.filter((book) => book.title.toLowerCase().includes(searchValue));
 
-        // ambil data ID dan Role nya
-        let dataBookID = actionButton.getAttribute('data-id');
-        let dataRole = actionButton.getAttribute('data-role');
+        completeBookshelfList.innerHTML = '';
+        showBookList(tempComplete, completeBookshelfList, {
+            readTitle: "Tandai Belum dibaca",
+            moveTo: "readIncomplete",
+        });
 
-        const deleteBookData = (books, BOOKS_STORAGE_KEY) => {
-            let temp = [];
-            books.forEach(book => {
-                if (book.id != dataBookID) {
-                    temp.push(book);
-                }
-            });
-            localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(temp));
+        incompleteBookshelfList.innerHTML = '';
+        showBookList(tempIncomplete, incompleteBookshelfList, {
+            readTitle: "Tandai Belum dibaca",
+            moveTo: "readIncomplete",
+        });
+    });
+
+    inputBook.addEventListener('submit', () => {
+        let newBook = {
+            id: new Date().getTime(),
+            title: inputBookTitle.value,
+            author: inputBookAuthor.value,
+            year: inputBookYear.value,
+            isComplete: (document.querySelector('#inputBookIsComplete:checked') !== null) ? true : false,
         }
 
-        // # Kriteria 3: Dapat Memindahkan Buku antar Rak
-        // cek apakah itu tandai sbg di baca atau hapus
-        if (dataRole == 'markAs') {
-            let moveTo = actionButton.getAttribute('data-moveTo');
-            if (moveTo == 'readComplete') {
+        if (newBook.isComplete == true) {
+            booksComplete.push(newBook);
+            localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
+
+        } else if (newBook.isComplete == false) {
+            booksIncomplete.push(newBook);
+            localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
+        }
+    });
+
+    let actionsButtons = document.querySelectorAll('.action_button');
+
+    actionsButtons.forEach((actionButton) => {
+        actionButton.addEventListener('click', () => {
+            let dataBookID = actionButton.getAttribute('data-id');
+            let dataRole = actionButton.getAttribute('data-role');
+
+            const deleteBookData = (books, BOOKS_STORAGE_KEY) => {
                 let temp = [];
-                booksInComplete.forEach(book => {
-                    if (book.id == dataBookID) {
-                        return temp = {
-                            id: book.id,
-                            title: book.title,
-                            author: book.author,
-                            year: book.year,
-                            isComplete: book.isComplete,
-                        };
+                books.forEach(book => {
+                    if (book.id != dataBookID) {
+                        temp.push(book);
                     }
                 });
-                temp.isComplete = true;
-                booksComplete.push(temp);
-                deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY);
-                localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
-            } else {
-                let temp = [];
-                booksComplete.forEach(book => {
-                    if (book.id == dataBookID) {
-                        return temp = {
-                            id: book.id,
-                            title: book.title,
-                            author: book.author,
-                            year: book.year,
-                            isComplete: book.isComplete,
-                        };
-                    }
-                });
-                temp.isComplete = false;
-                booksInComplete.push(temp);
-                deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-                localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksInComplete));
+                localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(temp));
             }
-        } else if (dataRole == 'delete') {
-            // # Kriteria 4: Dapat Menghapus Data Buku
-            // Hapus Datanya
-            alert('Buku Berhasil Dihapus!');
-            deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
-            deleteBookData(booksInComplete, BOOK_IS_INCOMPLETE_KEY)
-        }
-        location.reload();
+
+            if (dataRole == 'markAs') {
+                let moveTo = actionButton.getAttribute('data-moveTo');
+                if (moveTo == 'readComplete') {
+                    let temp = [];
+
+                    booksIncomplete.forEach(book => {
+                        if (book.id == dataBookID) {
+                            return temp = {
+                                id: book.id,
+                                title: book.title,
+                                author: book.author,
+                                year: book.year,
+                                isComplete: book.isComplete,
+                            };
+                        }
+                    });
+
+                    temp.isComplete = true;
+                    booksComplete.push(temp);
+                    deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY);
+                    localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
+
+                } else {
+                    let temp = [];
+
+                    booksComplete.forEach(book => {
+                        if (book.id == dataBookID) {
+                            return temp = {
+                                id: book.id,
+                                title: book.title,
+                                author: book.author,
+                                year: book.year,
+                                isComplete: book.isComplete,
+                            };
+                        }
+                    });
+
+                    temp.isComplete = false;
+                    booksIncomplete.push(temp);
+                    deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
+                    localStorage.setItem(BOOK_IS_INCOMPLETE_KEY, JSON.stringify(booksIncomplete));
+                }
+
+            } else if (dataRole == 'delete') {
+                alert('Buku Berhasil Dihapus!');
+                deleteBookData(booksComplete, BOOK_IS_COMPLETE_KEY);
+                deleteBookData(booksIncomplete, BOOK_IS_INCOMPLETE_KEY)
+            }
+
+            location.reload();
+        });
     });
-});
+}

@@ -145,7 +145,7 @@ main {
 
 .book_shelf>.book_list>.book_item {
     padding: 8px 16px 16px 16px;
-    border: 1px solid black;
+    border: 1px solid rgb(100, 189, 237);
     border-radius: 5px;
     margin: 10px 0;
 }
@@ -176,4 +176,9 @@ p {
 #bookSubmit:hover,
 #searchSubmit:hover {
     background-color: rgba(237, 100, 100, 0.87);
+}
+
+input {
+    border: 1px solid rgb(100, 189, 237);
+    outline: none;
 }
