@@ -76,6 +76,7 @@ showBookList(JSON.parse(localStorage.getItem(BOOK_IS_INCOMPLETE_KEY)), incomplet
 
 // # Kriteria 1: Mampu Menambahkan Data Buku
 inputBook.addEventListener('submit', (e) => {
+    // set buku baru
     let newBook = {
         id: new Date().getTime(),
         title: inputBookTitle.value,
@@ -84,8 +85,11 @@ inputBook.addEventListener('submit', (e) => {
         isComplete: (document.querySelector('#inputBookIsComplete:checked') !== null) ? true : false,
     }
 
+    // cek apakah sudah dibaca atau belum
     if (newBook.isComplete == true) {
+        //push kedalam buku baru ke books complete
         booksComplete.push(newBook);
+        //masukan ke localStorage book is complete
         localStorage.setItem(BOOK_IS_COMPLETE_KEY, JSON.stringify(booksComplete));
     } else if (newBook.isComplete == false) {
         booksInComplete.push(newBook);
